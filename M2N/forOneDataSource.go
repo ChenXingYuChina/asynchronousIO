@@ -136,7 +136,7 @@ func (m *forOneDataSource) loadWorker(key asynchronousIO.Key, k int64, c chan as
 	cmd := Load
 	model, err := dataSource.Load(key)
 	if err != nil {
-		c <- &asynchronousIO.AsynchronousIOError{err}
+		c <- asynchronousIO.AsynchronousIOError{err}
 		goto next
 	}
 	c <- model
@@ -154,7 +154,7 @@ next:
 		if c != nil {
 			err := dataSource.Save(model)
 			if err != nil {
-				c <- &asynchronousIO.AsynchronousIOError{err}
+				c <- asynchronousIO.AsynchronousIOError{err}
 				goto next
 			}
 			c <- asynchronousIO.Finish{}
@@ -168,7 +168,7 @@ next:
 	} else if cmd == DeleteItem {
 		err = dataSource.Delete(key)
 		if err != nil {
-			c <- &asynchronousIO.AsynchronousIOError{err}
+			c <- asynchronousIO.AsynchronousIOError{err}
 			goto next
 		}
 		c <- asynchronousIO.Finish{}
@@ -184,7 +184,7 @@ func (m *forOneDataSource) saveWorker(c chan asynchronousIO.Bean, key asynchrono
 	if c != nil {
 		err := dataSource.Save(bean)
 		if err != nil {
-			c <- &asynchronousIO.AsynchronousIOError{err}
+			c <- asynchronousIO.AsynchronousIOError{err}
 			goto next
 		}
 		c <- asynchronousIO.Finish{}
@@ -208,7 +208,7 @@ next:
 		if c != nil {
 			err := dataSource.Save(model)
 			if err != nil {
-				c <- &asynchronousIO.AsynchronousIOError{err}
+				c <- asynchronousIO.AsynchronousIOError{err}
 				goto next
 			}
 			c <- asynchronousIO.Finish{}
@@ -221,7 +221,7 @@ next:
 	} else if cmd == DeleteItem {
 		err := dataSource.Delete(key)
 		if err != nil {
-			c <- &asynchronousIO.AsynchronousIOError{err}
+			c <- asynchronousIO.AsynchronousIOError{err}
 			goto next
 		}
 		c <- asynchronousIO.Finish{}
@@ -233,7 +233,7 @@ func (m *forOneDataSource) deleteWorker(key asynchronousIO.Key, k int64, c chan 
 	p := k%m.bufferBlockNumber + m.bufferBlockNumber*key.TypeId()
 	err := dataSource.Delete(key)
 	if err != nil {
-		c <- &asynchronousIO.AsynchronousIOError{err}
+		c <- asynchronousIO.AsynchronousIOError{err}
 	} else {
 		c <- asynchronousIO.Finish{}
 	}

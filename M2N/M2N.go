@@ -1,9 +1,9 @@
 package M2N
 
-import "asynchronousIO"
+import "github.com/ChenXingyuChina/asynchronousIO"
 
 func NewM2NMachine(dataSources []asynchronousIO.DataSource, beanTypeNumbers, exceptBufferNumber int64, reIn bool) asynchronousIO.AsynchronousIOMachine {
-	if len(dataSources) == 1 {
+	if beanTypeNumbers == 1 {
 		return newForOneDataSource(dataSources[0], beanTypeNumbers, exceptBufferNumber)
 	}
 	if reIn {

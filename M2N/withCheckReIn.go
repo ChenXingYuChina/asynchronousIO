@@ -1,7 +1,7 @@
 package M2N
 
 import (
-	"asynchronousIO"
+	"github.com/ChenXingyuChina/asynchronousIO"
 	"sync"
 )
 
@@ -10,33 +10,10 @@ type reIn struct {
 	dataSource    []asynchronousIO.DataSource
 }
 
-type result struct {
-	c       chan asynchronousIO.Bean
-	cBuffer *sync.Pool
-}
-
-func (r result) get() (asynchronousIO.Bean, error) {
-	bean := <-r.c
-	r.cBuffer.Put(r.c)
-	if err, is := bean.(asynchronousIO.AsynchronousIOError); is {
-		return nil, err.E
-	}
-	return bean, nil
-}
-
-func (r result) error() error {
-	bean := <-r.c
-	r.cBuffer.Put(r.c)
-	if err, is := bean.(asynchronousIO.AsynchronousIOError); is {
-		return err.E
-	}
-	return nil
-}
-
 func (m *reIn) Load(key asynchronousIO.Key, source uint16) func() (asynchronousIO.Bean, error) {
 	c := m.channelBuffer.Get().(chan asynchronousIO.Bean)
 	go m.readWorker(key, source, c)
-	return result{c, m.channelBuffer}.get
+	return genResult(c, m.channelBuffer).get
 }
 
 func (m *reIn) Save(bean asynchronousIO.Bean, source uint16) {
@@ -46,13 +23,13 @@ func (m *reIn) Save(bean asynchronousIO.Bean, source uint16) {
 func (m *reIn) Delete(key asynchronousIO.Key, source uint16) func() error {
 	c := m.channelBuffer.Get().(chan asynchronousIO.Bean)
 	go m.deleteWorker(key, source, c)
-	return result{c, m.channelBuffer}.error
+	return genResult(c, m.channelBuffer).error
 }
 
 func (m *reIn) SaveAndCallBackWhenFinish(bean asynchronousIO.Bean, source uint16) func() error {
 	c := m.channelBuffer.Get().(chan asynchronousIO.Bean)
 	go m.writeWorker(bean, source, c)
-	return result{c, m.channelBuffer}.error
+	return genResult(c, m.channelBuffer).error
 }
 
 //func (m *reIn) Register(models []asynchronousIO.Bean, check func(key asynchronousIO.Key, source uint16) uint16) {

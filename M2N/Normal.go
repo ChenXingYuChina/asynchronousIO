@@ -1,7 +1,7 @@
 package M2N
 
 import (
-	"asynchronousIO"
+	"github.com/ChenXingyuChina/asynchronousIO"
 	"runtime"
 	"sync"
 )
@@ -29,7 +29,7 @@ func (m *normal) Load(key asynchronousIO.Key, source uint16) func() (asynchronou
 	if _, ok := bean.(asynchronousIO.Start); ok {
 		go m.loadWorker(key, k, c, m.dataSource[source])
 		//fmt.Println("load start")
-		return result{c: c, cBuffer: m.channelBuffer}.get
+		return genResult(c, m.channelBuffer).get
 	}
 	if c == nil {
 		return func(b asynchronousIO.Bean) func() (bean asynchronousIO.Bean, e error) {
@@ -40,9 +40,8 @@ func (m *normal) Load(key asynchronousIO.Key, source uint16) func() (asynchronou
 				return b, nil
 			}
 		}(bean)
-
 	}
-	return result{c: c, cBuffer: m.channelBuffer}.get
+	return genResult(c, m.channelBuffer).get
 }
 
 func (m *normal) Save(bean asynchronousIO.Bean, source uint16) {
@@ -82,7 +81,7 @@ func (m *normal) Delete(key asynchronousIO.Key, source uint16) func() error {
 			return nil
 		}
 	}
-	return result{c, m.channelBuffer}.error
+	return genResult(c, m.channelBuffer).error
 }
 
 func (m *normal) SaveAndCallBackWhenFinish(bean asynchronousIO.Bean, source uint16) func() error {
@@ -105,7 +104,7 @@ func (m *normal) SaveAndCallBackWhenFinish(bean asynchronousIO.Bean, source uint
 	if start {
 		go m.saveWorker(c, key, k, bean, m.dataSource[source])
 	}
-	return result{c, m.channelBuffer}.error
+	return genResult(c, m.channelBuffer).error
 }
 
 func newNormal(source []asynchronousIO.DataSource, beanTypeNumber int64, expectBufferNumber int64) asynchronousIO.AsynchronousIOMachine {

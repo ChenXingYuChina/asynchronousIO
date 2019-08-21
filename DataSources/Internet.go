@@ -1,7 +1,7 @@
 package DataSources
 
 import (
-	"asynchronousIO"
+	"github.com/ChenXingyuChina/asynchronousIO"
 	"bytes"
 	"io"
 	"net/http"

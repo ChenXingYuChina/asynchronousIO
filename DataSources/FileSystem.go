@@ -1,7 +1,7 @@
 package DataSources
 
 import (
-	"asynchronousIO"
+	"github.com/ChenXingyuChina/asynchronousIO"
 	"io"
 	"os"
 )
@@ -43,7 +43,8 @@ func (s *FileSystem) Save(bean asynchronousIO.Bean) error {
 }
 
 func (s *FileSystem) Delete(key asynchronousIO.Key) error {
-	return os.Remove(s.root + string(key.(asynchronousIO.FileName)))
+	n, _ := key.ToString()
+	return os.Remove(s.root + n)
 }
 
 func NewFileSystemDataSource(root string,

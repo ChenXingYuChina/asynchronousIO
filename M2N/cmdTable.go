@@ -1,7 +1,7 @@
 package M2N
 
 import (
-	"asynchronousIO"
+	"github.com/ChenXingyuChina/asynchronousIO"
 	"os"
 	"sync"
 )
